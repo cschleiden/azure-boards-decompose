@@ -2,7 +2,7 @@ interface ITest {
     
 }
 
-class TestClass {
+class TestClass implements ITest {
     public test() {
         
     }

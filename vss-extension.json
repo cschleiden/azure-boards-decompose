@@ -1,0 +1,66 @@
+{
+    "manifestVersion": 1,
+    "version": "0.0.1",
+    "name": "vsts-extension-ts-seed-advanced",
+    "scopes": [ "vso.work", "vso.work_write" ],
+    "description": "Describe your extension.",
+    "publisher": "cschleiden",
+    "id": "vsts-extension-ts-seed-advanced",
+    "icons": {
+        "default": "marketplace/logo.png"
+    },
+    "targets": [
+        {
+            "id": "Microsoft.VisualStudio.Services"
+        }
+    ],
+    "tags": [
+        "Sample"
+    ],
+    "content": {
+        "details": {
+            "path": "details.md"
+        }
+    },
+    "links": {
+        "home": {
+            "uri": "https://bit.ly"
+        },
+        "getstarted": {
+            "uri": "https://bit.ly"
+        },
+        "learn": {
+            "uri": "https://bit.ly"
+        },
+        "support": {
+            "uri": "https://bit.ly"
+        },
+        "repository": {
+            "uri": "https://bit.ly"
+        },
+        "issues": {
+            "uri": "https://bit.ly"
+        }
+    },
+    "branding": {
+        "color": "rgb(220, 235, 252)",
+        "theme": "light"
+    },
+    "categories": [
+        "Integrate"
+    ],
+    "contributions": [
+        {
+            "id": "contextMenu",
+            "type": "ms.vss-web.action-provider",
+            "description": "",
+            "targets": [
+                "ms.vss-work-web.work-item-context-menu"
+            ],
+            "properties": {
+                "group": "contributed",
+                "uri": "index.html"
+            }
+        }
+    ]
+}

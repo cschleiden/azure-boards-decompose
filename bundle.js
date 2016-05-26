@@ -1,4 +1,4 @@
-/******/ (function(modules) { // webpackBootstrap
+define(function() { return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 
@@ -44,14 +44,25 @@
 /* 0 */
 /***/ function(module, exports) {
 
-	var TestClass = (function () {
-	    function TestClass() {
+	var actionProvider = {
+	    getMenuItems: function (context) {
+	        return [{
+	                title: "Work Item Menu Action",
+	                action: function (actionContext) {
+	                    var workItemId = actionContext.id
+	                        || (actionContext.ids && actionContext.ids.length > 0 && actionContext.ids[0])
+	                        || (actionContext.workItemIds && actionContext.workItemIds.length > 0 && actionContext.workItemIds[0]);
+	                    if (workItemId) {
+	                        alert("Selected work item " + workItemId);
+	                    }
+	                }
+	            }];
 	    }
-	    TestClass.prototype.test = function () {
-	    };
-	    return TestClass;
-	}());
+	};
+	// Register context menu action provider
+	var extensionContext = VSS.getExtensionContext();
+	VSS.register(extensionContext.publisherId + "." + extensionContext.extensionId + ".contextMenu", actionProvider);
 
 
 /***/ }
-/******/ ]);
+/******/ ])});;

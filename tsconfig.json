@@ -1,8 +1,13 @@
 {
     "compilerOptions": {
-        "target": "es5"        
-    }, 
-    "exclude": [
-        "node_modules"
-    ]
+        "module": "amd",
+        "sourceMap": false,
+        "target": "es5"       
+    },   
+    "filesGlob": [
+        "src/**/*.ts"       
+    ],
+    "files": [
+        "typings/browser.d.ts"
+    ]    
 }

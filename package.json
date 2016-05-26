@@ -5,16 +5,16 @@
   "main": "webpack.config.js",
   "scripts": {
     "clean": "rimraf dist *.vsix",
-    "dev": "webpack-dev-server --hot --progress --colors",
+    "dev": "webpack-dev-server --hot --progress --colors --content-base ./src --https",
     "package:dev": "node ./scripts/packageDev",
     "publish:dev": "npm run package:dev && node ./scripts/publishDev",
-    "build:release": "npm run clean && mkdir dist && copyfiles -f ./src/index.html dist && webpack --output-path dist --progress --colors",
+    "build:release": "npm run clean && mkdir dist && webpack --progress --colors --output-path ./dist",
     "publish:release": "npm run build:release && node ./scripts/publishRelease"
   },
   "author": "Christopher Schleiden",
   "license": "MIT",
   "devDependencies": {
-    "copyfiles": "^0.2.1",
+    "copy-webpack-plugin": "^3.0.0",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
     "rimraf": "^2.5.2",
@@ -24,5 +24,8 @@
     "typings": "^1.0.4",
     "webpack": "^1.13.1",
     "webpack-dev-server": "^1.14.1"
+  },
+  "dependencies": {
+    "vss-web-extension-sdk": "^1.98.1"
   }
 }

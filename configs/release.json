@@ -2,7 +2,11 @@
     "public": false,
     "files": [
         {
-            "path": "dist",
+            "path": "src",
+            "addressable": true
+        },
+        {
+            "path": "libs",
             "addressable": true
         }
     ]

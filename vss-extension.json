@@ -19,7 +19,7 @@
     ],
     "content": {
         "details": {
-            "path": "details.md"
+            "path": "marketplace/details.md"
         }
     },
     "links": {
@@ -59,7 +59,7 @@
             ],
             "properties": {
                 "group": "contributed",
-                "uri": "index.html"
+                "uri": "src/index.html"
             }
         }
     ]

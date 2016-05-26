@@ -1,3 +1,4 @@
+var path = require("path");
 var webpack = require("webpack");
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 
@@ -19,7 +20,10 @@ module.exports = {
             ".js"],
         alias: {
             "VSS": "../node_modules/vss-web-extension-sdk/lib/VSS.SDK"
-        }
+        },
+        root: [
+            path.resolve("./src")
+        ]
     },
     module: {
         loaders: [
@@ -36,6 +40,11 @@ module.exports = {
             { from: "./src/*.html", to: "/" },
             { from: "./marketplace", to: "marketplace" },
             { from: "./vss-extension.json", to: "vss-extension-release.json" }
-        ])
+        ]),
+        new webpack.optimize.UglifyJsPlugin({
+            compress: {
+                warnings: false
+            }
+        })
     ]
 }

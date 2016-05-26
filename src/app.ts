@@ -1,3 +1,5 @@
+import { Test } from "other";
+
 var actionProvider =  {        
     getMenuItems: (context) => {
         return [<IContributedMenuItem>{
@@ -8,7 +10,7 @@ var actionProvider =  {
                     || (actionContext.workItemIds && actionContext.workItemIds.length > 0 && actionContext.workItemIds[0]);
                     
                 if (workItemId) {
-                    alert(`Selected work item ${workItemId}`);
+                    alert(`Selected work item ${workItemId} ${Test.Hello}`);
                 }
             }
         }];

@@ -4,11 +4,17 @@ var CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     target: "web",
-    entry: "./src/app.ts",
+    entry: {
+        registration: "./src/app.ts",
+        dialog: "./src/dialog.tsx"
+    },
     output: {
-        filename: "src/bundle.js",
+        filename: "src/[name].js",
         libraryTarget: "amd"
-    },    
+    },
+    externals: [
+        /^VSS\/.*/, /^TFS\/.*/
+    ],
     resolve: {
         // Add `.ts` and `.tsx` as a resolvable extension.
         extensions: [
@@ -17,20 +23,20 @@ module.exports = {
             ".web.js",
             ".ts",
             ".tsx",
-            ".js"],
-        alias: {
-            "VSS": "../node_modules/vss-web-extension-sdk/lib/VSS.SDK"
-        },
+            ".js"],        
         root: [
             path.resolve("./src")
         ]
     },
     module: {
         loaders: [
-            // all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
             {
                 test: /\.tsx?$/,
                 loader: "ts-loader"
+            },
+            {
+                test: /\.s?css$/,
+                loaders: ["style", "css", "sass"]
             }
         ]
     },
@@ -40,11 +46,15 @@ module.exports = {
             { from: "./src/*.html", to: "/" },
             { from: "./marketplace", to: "marketplace" },
             { from: "./vss-extension.json", to: "vss-extension-release.json" }
-        ]),
+        ])
+    ]
+}
+
+/*
+
         new webpack.optimize.UglifyJsPlugin({
             compress: {
                 warnings: false
             }
-        })
-    ]
-}
+        }),
+        */

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <script src="../libs/VSS.SDK.min.js"></script>
+    </head>
+
+    <body>
+        <script type="text/javascript">
+            VSS.init({
+                explicitNotifyLoaded: true,
+                usePlatformScripts: true
+            });
+            
+            // Load main entry point for extension
+            VSS.require(["src/dialog"], function () {
+                // Loading succeeded
+                VSS.notifyLoadSucceeded();
+            });
+        </script>
+        
+        <div id="content"></div>
+    </body>
+</html>

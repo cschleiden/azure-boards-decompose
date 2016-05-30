@@ -1,0 +1,47 @@
+$lineHeight: 25px;
+
+.work-item {
+    height: $lineHeight;
+    line-height: $lineHeight;
+    
+    margin: 2px 0px;
+    
+    overflow: hidden;
+    
+    span {
+        display: block;
+    }
+    
+    .type {
+        padding-left: 4px;
+        border-left: 6px solid;
+        
+        float: left;
+    }
+    
+    .title {
+        padding-left: 10px;
+        padding-right: 2px;
+        
+        input {
+            width: 100%;
+            height: $lineHeight - 2px;
+        }
+        
+        overflow: hidden;
+    }
+} 
+
+input.work-item-edit {
+    border: none;
+    
+    .invalid {
+        background-color: #ffc;
+    }
+}
+
+.parent-work-item {
+    font-size: large;
+    font-weight: bold;
+    margin-bottom: 10px;
+}

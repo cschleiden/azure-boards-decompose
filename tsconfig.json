@@ -2,12 +2,12 @@
     "compilerOptions": {
         "module": "amd",
         "sourceMap": false,
-        "target": "es5"       
+        "target": "es5",
+        "jsx": "react"
     },   
     "filesGlob": [
-        "src/**/*.ts"       
-    ],
-    "files": [
-        "typings/browser.d.ts"
+        "src/**/*.ts",
+        "/src/**/*.tsx",
+        "typings/index.d.ts"
     ]    
 }

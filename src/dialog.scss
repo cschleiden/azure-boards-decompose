@@ -1,0 +1,14 @@
+.saving-indicator {
+    position: fixed;
+    left: 50%;
+    top: 50%;    
+    text-align: center;
+
+    width: 100px;
+    margin-left: -50px;
+}
+
+.saving-indicator .spinner .rotating-plane {
+    background-color: #007acc;
+    margin-left: 35px;
+}

@@ -61,6 +61,14 @@
                 "group": "contributed",
                 "uri": "src/index.html"
             }
+        },
+        {
+            "id": "addItemsDialog",
+            "type": "ms.vss-web.control",
+            "targets": [],
+            "properties": {
+                "uri": "src/dialog.html"
+            }
         }
     ]
 }

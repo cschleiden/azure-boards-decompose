@@ -3,7 +3,7 @@ import { IDialogInputData } from "interfaces";
 var actionProvider = {
     getMenuItems: (context) => {
         return [<IContributedMenuItem>{
-            title: "Quick add work item(s)",
+            title: "Quick decompose work item",
             action: (actionContext) => {
                 let workItemId = actionContext.id
                     || (actionContext.ids && actionContext.ids.length > 0 && actionContext.ids[0])
@@ -15,14 +15,14 @@ var actionProvider = {
 
                     VSS.getService(VSS.ServiceIds.Dialog).then((hostDialogService: IHostDialogService) => {
                         hostDialogService.openDialog(`${extensionContext.publisherId}.${extensionContext.extensionId}.addItemsDialog`, {
-                            title: "Quick add work items",
+                            title: "Quick decompose work item",
                             width: 500,
                             height: 400,
                             modal: true,
                             buttons: {
                                 "ok": {
                                     id: "ok",
-                                    text: "Save",
+                                    text: "Create",
                                     click: () => {
                                         if (onSaveHandler) {
                                             dialog.updateOkButton(false);

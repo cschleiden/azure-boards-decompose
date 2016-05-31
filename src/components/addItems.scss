@@ -30,6 +30,27 @@ $lineHeight: 25px;
         
         overflow: hidden;
     }
+    
+    span.edit {    
+        width: 55px;
+        height: 16px;
+        float: right;
+
+        cursor: pointer;
+        
+        i {
+            color: grey;
+            
+            &:hover {                
+                color: blue;
+                font-weight: bold;
+            }
+                        
+            &.bowtie-edit-delete:hover {
+                color: red;
+            }
+        }         
+    } 
 } 
 
 input.work-item-edit {

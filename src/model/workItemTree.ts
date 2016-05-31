@@ -136,6 +136,17 @@ export class WorkItemTree {
 
         return newNode.workItem;
     }
+    
+    /** Delete item with given id from tree */
+    public deleteItem(id: number) {
+        let node = this._find(id);
+        
+        if (node === this.root) {
+            throw new Error("Cannot delete root");
+        }
+        
+        node.parent.remove(node);
+    }
 
     /** Flatten tree */
     public displayTree(): IWorkItem[] {

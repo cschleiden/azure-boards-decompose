@@ -94,8 +94,10 @@ export class WorkItemTypeService {
                 }
             }
         }
-
-        return null;
+    
+        // Treat unknown types as types of the highest level for now. This has to change
+        // once a process config REST API becomes available     
+        return 1;
     }
     
     /** Returns first type name for given level */

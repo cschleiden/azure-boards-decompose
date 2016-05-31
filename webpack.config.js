@@ -16,7 +16,6 @@ module.exports = {
         /^VSS\/.*/, /^TFS\/.*/
     ],
     resolve: {
-        // Add `.ts` and `.tsx` as a resolvable extension.
         extensions: [
             "",
             ".webpack.js",

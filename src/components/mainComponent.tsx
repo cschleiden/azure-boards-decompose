@@ -30,8 +30,6 @@ export class MainComponent extends React.Component<IMainProps, IMainState> {
     }
 
     public render(): JSX.Element {
-        console.log("Count " + this.state.items.length);
-
         return (<div onKeyUp={ this._onKeyUp.bind(this) } onFocus={ this._onFocus.bind(this) } >
             <ParentWorkItemComponent item={ this.state.parentWorkItem } />
 
@@ -39,11 +37,12 @@ export class MainComponent extends React.Component<IMainProps, IMainState> {
                 <AddItemsComponent
                     key={ item.id }
                     item={ item }
+                    actionsCreator={ this.props.actionsCreator }
                     ref={ idx.toString() }
                     />) }
         </div>);
-        
-         // isFocused={ idx === this.state.focusedItemIdx }
+
+        // isFocused={ idx === this.state.focusedItemIdx }
     }
 
     public componentDidUpdate() {
@@ -52,7 +51,7 @@ export class MainComponent extends React.Component<IMainProps, IMainState> {
 
     private _setFocus() {
         let element = this.refs[this.state.focusedItemIdx.toString()] as AddItemsComponent;
-        
+
         if (element) {
             element.focus();
         }
@@ -85,20 +84,10 @@ export class MainComponent extends React.Component<IMainProps, IMainState> {
         }
 
         switch (evt.key) {
-            // Support Ctrl+P
-            case "P":
-                if (!evt.ctrlKey) {
-                    return;
-                }
             case "ArrowUp":
                 this._updateFocusedItem(-1);
                 break;
-                
-            // Support Ctrl+N
-            case "N":
-                if (!evt.ctrlKey) {
-                    return;
-                }
+
             case "ArrowDown":
                 this._updateFocusedItem(1);
                 break;
@@ -113,6 +102,13 @@ export class MainComponent extends React.Component<IMainProps, IMainState> {
                 break;
             }
 
+            case "Delete": {
+                if (evt.shiftKey) {
+                    this.props.actionsCreator.deleteItem(focusedItem.id);
+                    break;
+                }
+            }
+
             default:
                 return;
         }
@@ -123,7 +119,14 @@ export class MainComponent extends React.Component<IMainProps, IMainState> {
     }
 
     private _onFocus(evt: FocusEvent) {
-        console.log("focus changed");
+        // Focus has changed, update out element idx
+        for (let i = 0; i < this.state.items.length; ++i) {
+            let comp = this.refs[i] as AddItemsComponent;
+            if (comp.hasFocus()) {
+                this._forceUpdateFocusedItem(i);
+                break;
+            }
+        }
     }
 
     private _forceUpdateFocusedItem(focusedItemIdx: number) {
@@ -149,7 +152,7 @@ export class MainComponent extends React.Component<IMainProps, IMainState> {
 
         this._forceUpdateFocusedItem(focusedItemIdx);
     }
-    
+
     private _getFocusedItem(): IWorkItem {
         if (this.state.focusedItemIdx >= 0 && this.state.focusedItemIdx < this.state.items.length) {
             return this.state.items[this.state.focusedItemIdx];

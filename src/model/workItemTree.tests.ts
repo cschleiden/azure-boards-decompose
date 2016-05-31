@@ -86,7 +86,7 @@ describe("WorkItemTree", () => {
         it("should not allow to insert after invalid element", () => {
             expect(() => tree.insert(99)).to.throw(Error);
         });
-    });
+    });   
 
     describe("indent/outdent", () => {
         beforeEach(() => {
@@ -166,6 +166,36 @@ describe("WorkItemTree", () => {
             let resultTree = tree.displayTree();
             
             expect(resultTree.some(e => e.id === parentId)).to.be.false;
+        });
+    });
+    
+    describe("delete", () => {
+        beforeEach(() => {
+            /* Build tree with hierarchy:
+             parent     (1) 
+               0        (2)
+                 1      (3)
+                 2      (3)
+                   3    (4)
+               4        (2)
+                 5      (3)
+                 6      (3)
+            */
+            tree = new TestableWorkItemTree(parentWorkItem);
+        });
+        
+        it("should not delete root", () => {
+            expect(() => tree.deleteItem(parentId)).to.throw(Error);
+        });
+        
+        it("should delete item", () => {
+            tree.deleteItem(3);            
+            expect(getTreeIds()).to.be.deep.equal([0, 1, 2, 4, 5, 6]);
+        });
+        
+        it("should delete item and subtree", () => {
+            tree.deleteItem(2);
+            expect(getTreeIds()).to.be.deep.equal([0, 1, 4, 5, 6]);
         });
     });
 

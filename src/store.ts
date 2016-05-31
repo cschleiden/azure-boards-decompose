@@ -38,7 +38,7 @@ export class Store extends BaseStore {
         Actions.changeWorkItemLevel.addListener(this._changeIndentLevel.bind(this));
         Actions.insertItem.addListener(this._insertItem.bind(this));
         Actions.changeTitle.addListener(this._changeTitle.bind(this));
-        Actions.attemptDelete.addListener(this._attemptDelete.bind(this));
+        Actions.deleteItem.addListener(this._deleteItem.bind(this));
 
         // Add initial new item
         this._insertItem({ 
@@ -65,18 +65,14 @@ export class Store extends BaseStore {
     }
     
     public getIsValid(): boolean {
-        return this._tree.resultTree().every(n => n.title.trim() !== "");
+        let currentResult = this.getResult();
+        
+        return currentResult && currentResult.length > 0 && currentResult.every(n => n.title.trim() !== "");
     }
 
-    private _attemptDelete(payload: Actions.IAttemptDeletePayload) {
-        // let workItem = this._getItem(payload.id);
-        // 
-        // if (workItem.title === "") {
-        //     let idx = this._workItems.indexOf(workItem);
-        //     this._workItems.splice(idx, 1);
-        //     
-        //     this._emitChanged();
-        // }
+    private _deleteItem(payload: Actions.IDeleteItemPayload) {
+        this._tree.deleteItem(payload.id);
+        this._emitChanged();
     }
 
     private _changeIndentLevel(payload: Actions.IChangeWorkItemLevelPayload) {

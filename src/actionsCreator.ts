@@ -7,6 +7,18 @@ export class ActionsCreator {
     }
     
     /**
+     * Change the title of the given item
+     * @param id Id of work item to change title for
+     * @param title New title of work item
+     */
+    public changeTitle(id: number, title: string) {
+        Actions.changeTitle.invoke({
+            id: id,
+            title: title
+        });
+    }
+    
+    /**
      * Change the indentation level of a work item
      * @param id Id of work item to change
      * @param indentLevelChange Desired indent level change of the work item
@@ -29,11 +41,11 @@ export class ActionsCreator {
     }
     
     /**
-     * Attempt to delete the given work item
+     * Delete the given work item
      * @param id Work item id to delete
      */
-    public attemptDelete(id: number) {
-        Actions.attemptDelete.invoke({
+    public deleteItem(id: number) {
+        Actions.deleteItem.invoke({
             id: id
         });
     }

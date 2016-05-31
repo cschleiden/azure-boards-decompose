@@ -51,9 +51,9 @@ export interface IChangeWorkItemTitle {
 /** Action to be called when work item title changes */
 export var changeTitle = new Action<IChangeWorkItemTitle>();
 
-export interface IAttemptDeletePayload {
+export interface IDeleteItemPayload {
     id: number;
 }
 
 /** Action to be called when work item should be deleted */
-export var attemptDelete = new Action<IAttemptDeletePayload>();
+export var deleteItem = new Action<IDeleteItemPayload>();

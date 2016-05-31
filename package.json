@@ -1,6 +1,4 @@
 {
-  "name": "vsts-extension-ts-seed-advanced",
-  "version": "0.0.1",
   "description": "",
   "main": "webpack.config.js",
   "scripts": {
@@ -8,7 +6,7 @@
     "dev": "webpack-dev-server --hot --progress --colors --content-base ./src --https",
     "package:dev": "node ./scripts/packageDev",
     "publish:dev": "npm run package:dev && node ./scripts/publishDev",
-    "build:release": "npm run clean && mkdir dist && webpack --progress --colors --output-path ./dist",
+    "build:release": "npm run clean && mkdir dist && webpack --progress --colors --output-path ./dist -p",
     "publish:release": "npm run build:release && node ./scripts/publishRelease",
     "test": "karma start --colors"
   },

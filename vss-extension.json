@@ -1,11 +1,11 @@
 {
     "manifestVersion": 1,
     "version": "0.0.1",
-    "name": "vsts-extension-ts-seed-advanced",
+    "name": "Quick Decompose",
     "scopes": [ "vso.work", "vso.work_write" ],
-    "description": "Describe your extension.",
+    "description": "Quickly decompose work item into hierarchies",
     "publisher": "cschleiden",
-    "id": "vsts-extension-ts-seed-advanced",
+    "id": "quick-decompose",
     "icons": {
         "default": "marketplace/logo.png"
     },

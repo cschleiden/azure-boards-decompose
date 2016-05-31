@@ -22,7 +22,7 @@ module.exports = {
             ".web.js",
             ".ts",
             ".tsx",
-            ".js"],        
+            ".js"],
         root: [
             path.resolve("./src")
         ]
@@ -48,12 +48,3 @@ module.exports = {
         ])
     ]
 }
-
-/*
-
-        new webpack.optimize.UglifyJsPlugin({
-            compress: {
-                warnings: false
-            }
-        }),
-        */

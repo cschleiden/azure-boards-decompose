@@ -8,7 +8,9 @@
     "publish:dev": "npm run package:dev && node ./scripts/publishDev",
     "build:release": "npm run clean && mkdir dist && webpack --progress --colors --output-path ./dist -p",
     "publish:release": "npm run build:release && node ./scripts/publishRelease",
-    "test": "karma start --colors"
+    "dev:test": "karma start",
+    "test": "karma start --single-run",
+    "postinstall": "typings install && npm run test"
   },
   "author": "Christopher Schleiden",
   "license": "MIT",

@@ -8,6 +8,10 @@
         {
             "path": "libs",
             "addressable": true
+        },
+        {
+            "path": "marketplace",
+            "addressable": true
         }
     ]
 }

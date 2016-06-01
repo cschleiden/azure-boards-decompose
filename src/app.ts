@@ -15,7 +15,7 @@ var actionProvider = {
 
                     VSS.getService(VSS.ServiceIds.Dialog).then((hostDialogService: IHostDialogService) => {
                         hostDialogService.openDialog(`${extensionContext.publisherId}.${extensionContext.extensionId}.addItemsDialog`, {
-                            title: "Quick decompose work item",
+                            title: "Decompose",
                             width: 500,
                             height: 400,
                             modal: true,

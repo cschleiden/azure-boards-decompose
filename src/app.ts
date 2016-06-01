@@ -3,7 +3,7 @@ import { IDialogInputData } from "interfaces";
 var actionProvider = {
     getMenuItems: (context) => {
         return [<IContributedMenuItem>{
-            title: "Quick decompose work item",
+            title: "Decompose work item",
             action: (actionContext) => {
                 let workItemId = actionContext.id
                     || (actionContext.ids && actionContext.ids.length > 0 && actionContext.ids[0])

@@ -32,7 +32,7 @@ export class WorkItemTypeService {
             let taskCategory = categories.filter(c => c.referenceName === "Microsoft.TaskCategory")[0];
                         
             this._workItemTypes.push({
-                typeNames: epicCategory.workItemTypes.map(wit => wit.name),
+                typeNames: epicCategory && epicCategory.workItemTypes.map(wit => wit.name) || ["Scenario"], // Workaround until process api is available 
                 level: 1,
                 color: "rgb(255, 123, 0)"
             });

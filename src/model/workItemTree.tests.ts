@@ -4,7 +4,7 @@ import { WorkItemTree, WorkItemNode } from "./workItemTree";
 import { IWorkItem } from "../interfaces";
 
 class TestableWorkItemTree extends WorkItemTree {
-    constructor(parentWorkItem: IWorkItem) {
+    constructor(parentWorkItem: IWorkItem, buildEmptyTree: boolean = false) {
         super(parentWorkItem);
 
         /* Build tree with hierarchy:
@@ -18,14 +18,16 @@ class TestableWorkItemTree extends WorkItemTree {
                  6      (3)
             */
 
-        this.root.add(new WorkItemNode(this._getWorkItem(0)));
-        this.root.children[0].add(new WorkItemNode(this._getWorkItem(1)));
-        this.root.children[0].add(new WorkItemNode(this._getWorkItem(2)));
-        this.root.children[0].children[1].add(new WorkItemNode(this._getWorkItem(3)));
+        if (!buildEmptyTree) {
+            this.root.add(new WorkItemNode(this._getWorkItem(0)));
+            this.root.children[0].add(new WorkItemNode(this._getWorkItem(1)));
+            this.root.children[0].add(new WorkItemNode(this._getWorkItem(2)));
+            this.root.children[0].children[1].add(new WorkItemNode(this._getWorkItem(3)));
 
-        this.root.add(new WorkItemNode(this._getWorkItem(4)));
-        this.root.children[1].add(new WorkItemNode(this._getWorkItem(5)));
-        this.root.children[1].add(new WorkItemNode(this._getWorkItem(6)));
+            this.root.add(new WorkItemNode(this._getWorkItem(4)));
+            this.root.children[1].add(new WorkItemNode(this._getWorkItem(5)));
+            this.root.children[1].add(new WorkItemNode(this._getWorkItem(6)));
+        }
     }
 
     private _getWorkItem(id: number): IWorkItem {
@@ -50,11 +52,11 @@ describe("WorkItemTree", () => {
         beforeEach(() => {
             tree = new TestableWorkItemTree(parentWorkItem);
         });
-        
+
         it("should throw for invalid id", () => {
             expect(() => tree.getItem(99)).to.throw(Error);
         });
-        
+
         it("should get item for valid id", () => {
             expect(tree.getItem(2).id).to.be.equal(2);
         });
@@ -86,7 +88,7 @@ describe("WorkItemTree", () => {
         it("should not allow to insert after invalid element", () => {
             expect(() => tree.insert(99)).to.throw(Error);
         });
-    });   
+    });
 
     describe("indent/outdent", () => {
         beforeEach(() => {
@@ -131,19 +133,19 @@ describe("WorkItemTree", () => {
             expect(tree.outdent(0)).to.be.false;
             expect(tree.outdent(4)).to.be.false;
         });
-        
+
         it("should allow outdenting items without subtree", () => {
             expect(tree.outdent(3)).to.be.true;
             expect(getTreeLevels()).to.be.deep.equal([2, 3, 3, 3, 2, 3, 3]);
             expect(getTreeIds()).to.be.deep.equal([0, 1, 2, 3, 4, 5, 6]);
         });
-        
+
         it("should allow outdenting items with subtree", () => {
             expect(tree.outdent(2)).to.be.true;
             expect(getTreeLevels()).to.be.deep.equal([2, 3, 2, 3, 2, 3, 3]);
             expect(getTreeIds()).to.be.deep.equal([0, 1, 2, 3, 4, 5, 6]);
         });
-        
+
         it("should allow reparent children when outdenting items", () => {
             tree.outdent(5);
             expect(getTreeLevels()).to.be.deep.equal([2, 3, 3, 4, 2, 2, 3]);
@@ -155,20 +157,20 @@ describe("WorkItemTree", () => {
         it("should generate tree", () => {
             tree = new TestableWorkItemTree(parentWorkItem);
             let resultTree = tree.resultTree();
-            
+
             expect(resultTree.map(wi => wi.parentId)).to.be.deep.equal([null, 42, 0, 0, 2, 42, 4, 4]);
         });
     });
-    
+
     describe("displayTree", () => {
         it("should not include parent item", () => {
             tree = new TestableWorkItemTree(parentWorkItem);
             let resultTree = tree.displayTree();
-            
+
             expect(resultTree.some(e => e.id === parentId)).to.be.false;
         });
     });
-    
+
     describe("delete", () => {
         beforeEach(() => {
             /* Build tree with hierarchy:
@@ -183,16 +185,23 @@ describe("WorkItemTree", () => {
             */
             tree = new TestableWorkItemTree(parentWorkItem);
         });
-        
+
         it("should not delete root", () => {
             expect(() => tree.deleteItem(parentId)).to.throw(Error);
         });
-        
+
+        it("should not delete last item", () => {
+            tree = new TestableWorkItemTree(parentWorkItem, true);
+            let id = tree.insert(parentId).id;
+
+            expect(tree.deleteItem(id)).to.be.false;
+        });
+
         it("should delete item", () => {
-            tree.deleteItem(3);            
+            tree.deleteItem(3);
             expect(getTreeIds()).to.be.deep.equal([0, 1, 2, 4, 5, 6]);
         });
-        
+
         it("should delete item and subtree", () => {
             tree.deleteItem(2);
             expect(getTreeIds()).to.be.deep.equal([0, 1, 4, 5, 6]);
@@ -202,7 +211,7 @@ describe("WorkItemTree", () => {
     let getTreeLevels = (): number[] => {
         return tree.displayTree().map(wi => wi.level);
     };
-    
+
     let getTreeIds = (): number[] => {
         return tree.displayTree().map(wi => wi.id);
     };

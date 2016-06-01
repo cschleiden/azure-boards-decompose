@@ -66,8 +66,8 @@ export class Store extends BaseStore {
     
     public getIsValid(): boolean {
         let currentResult = this.getResult();
-        
-        return currentResult && currentResult.length > 0 && currentResult.every(n => n.title.trim() !== "");
+                
+        return currentResult && currentResult.length > 1 && currentResult.every(n => n.title.trim() !== "");
     }
 
     private _deleteItem(payload: Actions.IDeleteItemPayload) {

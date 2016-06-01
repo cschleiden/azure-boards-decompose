@@ -26,6 +26,8 @@ $lineHeight: 25px;
         input {
             width: 100%;
             height: $lineHeight - 2px;
+            
+            padding: 0px 4px;
         }
         
         overflow: hidden;

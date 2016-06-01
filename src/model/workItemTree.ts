@@ -126,7 +126,7 @@ export class WorkItemTree {
             title: ""
         });
         
-        if (node === this.root) {        
+        if (node === this.root) {
             node.add(newNode);
         } else {
             node.parent.add(newNode);
@@ -138,14 +138,21 @@ export class WorkItemTree {
     }
     
     /** Delete item with given id from tree */
-    public deleteItem(id: number) {
+    public deleteItem(id: number): boolean {
         let node = this._find(id);
         
         if (node === this.root) {
             throw new Error("Cannot delete root");
         }
         
+        if (node.parent === this.root && this.root.children.length === 1) {
+            // Cannot delete last item before root
+            return false;
+        }
+        
         node.parent.remove(node);
+        
+        return true;
     }
 
     /** Flatten tree */

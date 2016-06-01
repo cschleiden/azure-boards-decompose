@@ -1,5 +1,10 @@
 # VSTS Quick Decompose #
 
+This extension allows you to quickly decompose a work item into a valid hierarchy. Example:
+
+![Decompose item into hierarchy](marketplace/quick-decompose.gif?raw=true)
+
+
 This is an example for using relatively modern web dev technologies to build a VSTS (https://www.visualstudio.com) extension. In contrast to my other seed project and example (https://github.com/cschleiden/vsts-extension-ts-seed-simple and https://github.com/cschleiden/vsts-extension-tags-mru) which focused on simplicity, this sample aims to be more complete. It supports:
 
 - Code written in Typescript/Styling defined using SASS

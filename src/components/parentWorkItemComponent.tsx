@@ -1,4 +1,4 @@
-import "./addItems.scss";
+import "./items.scss";
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";

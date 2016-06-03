@@ -4,6 +4,20 @@ $lineHeight: 25px;
     height: $lineHeight;
     line-height: $lineHeight;
     
+    &.save-error {
+        height: auto;
+    }
+    
+    & .error-message {
+        i {
+            display: inline-block;
+            vertical-align: top;
+        }
+        
+        margin-left: 16px;
+        line-height: 16px;
+    }
+    
     margin: 2px 0px;
     
     overflow: hidden;

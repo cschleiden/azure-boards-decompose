@@ -16,6 +16,7 @@ import { WorkItemTypeService } from "services/workItemTypeService";
 import { WorkItemCreator } from "services/workItemCreator";
 
 import { MainComponent } from "components/mainComponent";
+import { ErrorComponent } from "components/errorComponent";
 
 import { Store } from "store";
 import { ActionsCreator } from "actionsCreator";
@@ -45,7 +46,7 @@ Q.all<any>([typeServiceInitPromise, parentWorkItemPromise]).then<void>(values =>
         level: parentLevel || 1,
         relativeLevel: 0
     };
-    
+
     let parentIterationPath = workItem.fields["System.IterationPath"];
     let parentAreaPath = workItem.fields["System.AreaPath"];
 
@@ -72,6 +73,20 @@ Q.all<any>([typeServiceInitPromise, parentWorkItemPromise]).then<void>(values =>
 
         let resultTree = store.getResult();
         let creator = new WorkItemCreator(store.getParentItem().id, parentIterationPath, parentAreaPath);
-        return creator.createWorkItems(resultTree);
+        return creator.createWorkItems(resultTree).then<void>(failedWorkItems => {
+            if (Object.keys(failedWorkItems).length > 0) {
+                // Some work items have failed to save, show error result
+                //let defer = Q.defer<void>();
+
+                ReactDOM.render(<ErrorComponent
+                    result={ failedWorkItems } 
+                    workItems={ resultTree } />, document.getElementById("content"));
+
+                throw "Decompose - Error while saving";
+            } else {
+                // Saved successfully, close dialog
+                return;
+            }
+        });
     });
 });

@@ -30,10 +30,12 @@ var actionProvider = {
                                             return onSaveHandler().then(() => {
                                                 dialog.close();
                                                 
-                                                VSS.getService(VSS.ServiceIds.Navigation).then((navigationService: IHostNavigationService) => {
+                                                return VSS.getService(VSS.ServiceIds.Navigation).then((navigationService: IHostNavigationService) => {
                                                     // Refresh backlog
                                                     navigationService.reload();
                                                 });
+                                            }, (error) => {
+                                                dialog.setTitle(error);
                                             });
                                         }
                                     },

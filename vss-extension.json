@@ -1,6 +1,6 @@
 {
     "manifestVersion": 1,
-    "version": "0.0.2",
+    "version": "0.0.3",
     "name": "Decompose",
     "scopes": [ "vso.work", "vso.work_write" ],
     "description": "Quickly decompose work item into sub-hierarchies",

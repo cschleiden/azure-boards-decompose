@@ -2,7 +2,7 @@
 
 **Decompose** allows you to quickly break down work items into sub-hierarchies. 
 
-- Quickly create hierarchies of work items
+- Create hierarchies of work items without waiting
 - Should it be a Task or is it big enough for a Story? Promote/Demote work items easily between different hierarchy levels
 - Full support for keyboard shortcuts. Just like your favorite editor (VS Code), you never have to leave the keyboard
 - Iterate on titles before commiting

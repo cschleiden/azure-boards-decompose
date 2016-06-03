@@ -7,16 +7,28 @@ import { IWorkItem, IDialogInputData, IResultWorkItem } from "interfaces";
 
 import { WorkItemTypeService } from "services/workItemTypeService";
 
-export class WorkItemCreator {
-    private _tempToRealParentIdMap: IDictionaryNumberTo<number> = {};
+interface ISaveResult {
+    tempId: number;
+    id?: number;
+    reason?: string;
+}
 
-    constructor(private _parentId: number, private _iterationPath: string, private _areaPath: string) {        
+export class WorkItemCreator {
+    private _tempToRealParentIdMap: IDictionaryNumberTo<number>;
+    private _failedWorkItems: IDictionaryNumberTo<string>;
+
+    constructor(private _parentId: number, private _iterationPath: string, private _areaPath: string) {
+        this._tempToRealParentIdMap = {};
+        this._failedWorkItems = {};
+        
         this._tempToRealParentIdMap[this._parentId] = this._parentId;
     }
 
-    public createWorkItems(result: IResultWorkItem[]): IPromise<void> {
-
-        return this._createWorkItemsWorker(result.slice(0));
+    /** Create work items, return ids of failed operations */
+    public createWorkItems(result: IResultWorkItem[]): IPromise<IDictionaryNumberTo<string>> {       
+        return this._createWorkItemsWorker(result.slice(0)).then(() => {
+            return this._failedWorkItems;
+        });
     }
 
     private _createWorkItemsWorker(workItems: IResultWorkItem[]): IPromise<void> {
@@ -32,17 +44,33 @@ export class WorkItemCreator {
                 if (workItem.parentId === this._parentId || this._tempToRealParentIdMap[workItem.parentId]) {
                     promises.push(this._getCreateWorkItemPromise(workItem));
                 } else {
-                    workItemsToCreate.push(workItem);
+                    if (this._failedWorkItems[workItem.parentId]) {                        
+                        // Parent has failed to save earlier, mark as failed and do not try again
+                        this._failedWorkItems[workItem.id] = "Parent could not be saved";
+                    } else if (!this._failedWorkItems[workItem.id]) {
+                        // Work item still needs to be created
+                        workItemsToCreate.push(workItem);
+                    }
                 }
             }
         }
 
-        return Q.all(promises).then(() => {
+        return Q.all(promises).then((results: ISaveResult[]) => {
+            for (let result of results) {
+                if (!!result.reason) {
+                    // Work item failed to save
+                    this._failedWorkItems[result.tempId] = result.reason || "Work item failed to save";
+                } else {
+                    // Work item was saved successfully
+                }
+            }
+
+            // Start next batch
             return this._createWorkItemsWorker(workItemsToCreate);
         });
     }
 
-    private _getCreateWorkItemPromise(workItem: IResultWorkItem): IPromise<number> {
+    private _getCreateWorkItemPromise(workItem: IResultWorkItem): IPromise<ISaveResult> {
         let context = VSS.getWebContext();
         let client = WIT_Client.getClient();
 
@@ -64,8 +92,18 @@ export class WorkItemCreator {
             }
         });
 
-        return client.createWorkItem(patchDocument, context.project.id, workItemType).then((createdWorkItem: WIT_Contracts.WorkItem) => {
+        return client.createWorkItem(patchDocument, context.project.id, workItemType).then<ISaveResult>((createdWorkItem: WIT_Contracts.WorkItem) => {
             this._tempToRealParentIdMap[workItem.id] = createdWorkItem.id;
+            
+            return {
+                tempId: workItem.id,
+                id: createdWorkItem.id
+            };
+        }, (error) => {
+            return {
+                tempId: workItem.id,
+                reason: error.message
+            };
         });
     }
 

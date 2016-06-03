@@ -99,7 +99,7 @@ export class WorkItemTree {
                 newParent.add(child);
             }
         }
-        
+
         this._fixTypeIndex(node);
 
         return true;
@@ -144,7 +144,7 @@ export class WorkItemTree {
 
         return true;
     }
-    
+
     private _fixTypeIndex(node: WorkItemNode) {
         let level = this._getLevelForNode(node);
         let backlog = this.workItemTypeService.getBacklogForLevel(level);
@@ -234,6 +234,7 @@ export class WorkItemTree {
                 id: node.workItem.id,
                 title: node.workItem.title,
                 level: level,
+                relativeLevel: level - this.parentWorkItem.level,
                 parentId: parent ? parent.workItem && parent.workItem.id : null,
                 typeIndex: node.workItem.typeIndex,
                 typeName: this.workItemTypeService.getBacklogForLevel(level).types[node.workItem.typeIndex].name

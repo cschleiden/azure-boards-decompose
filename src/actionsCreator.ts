@@ -49,4 +49,14 @@ export class ActionsCreator {
             id: id
         });
     }
+    
+    /**
+     * Change type of given work item
+     * @param id Work item id to change
+     */
+    public changeType(id: number) {
+        Actions.changeType.invoke({
+            id: id
+        });
+    }
 }

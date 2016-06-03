@@ -46,7 +46,7 @@ export class WorkItemCreator {
         let context = VSS.getWebContext();
         let client = WIT_Client.getClient();
 
-        let workItemType = WorkItemTypeService.getInstance().getTypeForLevel(workItem.level).typeNames[0];
+        let workItemType = workItem.typeName;
         let parentId = this._tempToRealParentIdMap[workItem.parentId];
 
         let patchDocument: any[] = [];

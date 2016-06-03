@@ -27,7 +27,7 @@ export class AddItemsComponent extends React.Component<IAddItemsProps, void> {
     }
     
     public render(): JSX.Element {
-        let workItemType = WorkItemTypeService.getInstance().getTypeForLevel(this.props.item.level);
+        let workItemType = WorkItemTypeService.getInstance().getBacklogForLevel(this.props.item.level).types[this.props.item.typeIndex];
         
         let inputClasses = "work-item-edit";
         if (this.props.item.title.trim() === "") {
@@ -35,7 +35,7 @@ export class AddItemsComponent extends React.Component<IAddItemsProps, void> {
         }
         
         return <div className="work-item" style={{ paddingLeft: this.props.item.relativeLevel * INDENT_WIDTH }}>
-            <span className="type" style={{ borderColor: workItemType.color }}>{ workItemType.typeNames[0] }</span>
+            <span className="type editable" style={{ borderColor: workItemType.color }} title="Change work item type [Alt+Enter]" onClick={ this._changeType.bind(this) }>{ workItemType.name }</span>
             <span className="edit">
                 <i className="icon bowtie-icon bowtie-chevron-left" title="Demote [Shift+Tab]" onClick={ this._outdent.bind(this) }></i>
                 <i className="icon bowtie-icon bowtie-chevron-right" title="Promote [Tab]" onClick={ this._indent.bind(this) }></i>
@@ -56,7 +56,8 @@ export class AddItemsComponent extends React.Component<IAddItemsProps, void> {
     private _onKeyDown(evt: KeyboardEvent) {
         if (evt.key === "Tab"
             || evt.key === "ArrowUp"
-            || evt.key === "ArrowDown") {
+            || evt.key === "ArrowDown"
+            || evt.key === "Enter") {
             evt.preventDefault();
         }
     }
@@ -77,5 +78,9 @@ export class AddItemsComponent extends React.Component<IAddItemsProps, void> {
         
     private _delete() {
         this.props.actionsCreator.deleteItem(this.props.item.id);
+    }
+    
+    private _changeType() {
+        this.props.actionsCreator.changeType(this.props.item.id);
     }
 }

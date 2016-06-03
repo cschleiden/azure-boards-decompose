@@ -1,11 +1,31 @@
 import { expect } from 'chai';
 
-import { WorkItemTree, WorkItemNode } from "./workItemTree";
-import { IWorkItem } from "../interfaces";
+import { WorkItemTree, WorkItemNode, IWorkItemTypeAdapter } from "./workItemTree";
+import { IWorkItem, IBacklogLevel, IWorkItemType } from "../interfaces";
+
+
+class TestableWorkItemTypeService implements IWorkItemTypeAdapter {
+    public getMaxLevel(): number {
+        return 4;
+    }    
+    
+    public getBacklogForLevel(level: number): IBacklogLevel {
+        return <IBacklogLevel>{
+            level: level,
+            types: [{
+                name: `type1-${level}`,
+                color: "rgb(255, 0, 0)"
+            }, {
+                name: `type2-${level}`,
+                color: "rgb(0, 255, 0)"
+            }]
+        };
+    }
+}
 
 class TestableWorkItemTree extends WorkItemTree {
     constructor(parentWorkItem: IWorkItem, buildEmptyTree: boolean = false) {
-        super(parentWorkItem);
+        super(parentWorkItem, new TestableWorkItemTypeService());
 
         /* Build tree with hierarchy:
              parent     (1) 
@@ -33,7 +53,8 @@ class TestableWorkItemTree extends WorkItemTree {
     private _getWorkItem(id: number): IWorkItem {
         return {
             title: "",
-            id: id
+            id: id,
+            typeIndex: 0
         };
     }
 }
@@ -43,7 +64,8 @@ describe("WorkItemTree", () => {
     const parentWorkItem: IWorkItem = {
         id: parentId,
         title: "Parent-Epic",
-        level: 1
+        level: 1,
+        typeIndex: 0
     };
 
     let tree: WorkItemTree;
@@ -64,14 +86,15 @@ describe("WorkItemTree", () => {
 
     describe("insert", () => {
         beforeEach(() => {
-            tree = new WorkItemTree(parentWorkItem);
+            tree = new TestableWorkItemTree(parentWorkItem, true);
         });
 
         it("should allow to insert item after root", () => {
             expect(tree.insert(parentId)).to.deep.equal(<IWorkItem>{
                 id: -1,
                 title: "",
-                level: 2
+                level: 2,
+                typeIndex: 0
             });
         });
 
@@ -81,7 +104,8 @@ describe("WorkItemTree", () => {
             expect(tree.insert(afterId)).to.deep.equal(<IWorkItem>{
                 id: -2,
                 title: "",
-                level: 2
+                level: 2,
+                typeIndex: 0
             });
         });
 
@@ -113,17 +137,23 @@ describe("WorkItemTree", () => {
         });
 
         it("should not allow indenting items after max level", () => {
-            expect(tree.indent(2)).to.be.false;
+            expect(tree.indent(3)).to.be.false;
+        });
+        
+        it("should allow indenting items and change children if max level would be reached", () => {
+            expect(tree.indent(2)).to.be.true;
+            expect(getTreeLevels()).to.be.deep.equal([2, 3, 4, 4, 2, 3, 3]);
+            expect(getTreeIds()).to.be.deep.equal([0, 1, 2, 3, 4, 5, 6]);
         });
 
         it("should allow indenting items without subtree", () => {
-            tree.indent(6);
+            expect(tree.indent(6)).to.be.true;
             expect(getTreeLevels()).to.be.deep.equal([2, 3, 3, 4, 2, 3, 4]);
             expect(getTreeIds()).to.be.deep.equal([0, 1, 2, 3, 4, 5, 6]);
         });
 
         it("should allow indenting items with subtree", () => {
-            tree.indent(4);
+            expect(tree.indent(4)).to.be.true;
             expect(getTreeLevels()).to.be.deep.equal([2, 3, 3, 4, 3, 4, 4]);
             expect(getTreeIds()).to.be.deep.equal([0, 1, 2, 3, 4, 5, 6]);
         });
@@ -147,9 +177,19 @@ describe("WorkItemTree", () => {
         });
 
         it("should allow reparent children when outdenting items", () => {
-            tree.outdent(5);
+            expect(tree.outdent(5)).to.be.true;
             expect(getTreeLevels()).to.be.deep.equal([2, 3, 3, 4, 2, 2, 3]);
             expect(getTreeIds()).to.be.deep.equal([0, 1, 2, 3, 4, 5, 6]);
+        });
+        
+        it("should reset typeindex", () => {
+            tree.getItem(2).typeIndex = 3;
+            expect(tree.outdent(2)).to.be.true;
+            expect(tree.getItem(2).typeIndex).to.be.equal(0);
+            
+            tree.getItem(2).typeIndex = 3;
+            expect(tree.indent(2)).to.be.true;
+            expect(tree.getItem(2).typeIndex).to.be.equal(0);
         });
     });
 
@@ -207,6 +247,37 @@ describe("WorkItemTree", () => {
             expect(getTreeIds()).to.be.deep.equal([0, 1, 4, 5, 6]);
         });
     });
+    
+    describe("changeType", () => {
+        beforeEach(() => {
+            /* Build tree with hierarchy:
+             parent     (1) 
+               0        (2)
+                 1      (3)
+                 2      (3)
+                   3    (4)
+               4        (2)
+                 5      (3)
+                 6      (3)
+            */
+            tree = new TestableWorkItemTree(parentWorkItem);
+        });
+        
+        it("should cycle through types per level", () => {
+            expect(getTypeNameForItem(2)).to.be.equal("type1-3");
+            
+            tree.changeType(2);
+            expect(getTypeNameForItem(2)).to.be.equal("type2-3");
+            
+            tree.changeType(2);
+            expect(getTypeNameForItem(2)).to.be.equal("type1-3");
+        });
+        
+        let getTypeNameForItem = (id: number): string => {
+            return tree.resultTree().filter(item => item.id === id)[0].typeName;
+        }
+    });
+       
 
     let getTreeLevels = (): number[] => {
         return tree.displayTree().map(wi => wi.level);

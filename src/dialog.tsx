@@ -29,10 +29,20 @@ let parentWorkItemPromise = WIT_Client.getClient().getWorkItem(
 Q.all<any>([typeServiceInitPromise, parentWorkItemPromise]).then<void>(values => {
     let workItem: WIT_Contracts.WorkItem = values[1];
 
+    let parentLevel = WorkItemTypeService.getInstance().getLevelForTypeName(workItem.fields["System.WorkItemType"]);
+    let types = WorkItemTypeService.getInstance().getBacklogForLevel(parentLevel).types;
+    let typeIndex: number = null;
+    types.forEach((type, idx) => {
+        if (type.name === workItem.fields["System.WorkItemType"]) {
+            typeIndex = idx;
+        }
+    });
+
     let parentWorkItem: IWorkItem = {
         id: workItem.fields["System.Id"],
+        typeIndex: typeIndex,
         title: workItem.fields["System.Title"],
-        level: WorkItemTypeService.getInstance().getLevelForType(workItem.fields["System.WorkItemType"]),
+        level: parentLevel || 1,
         relativeLevel: 0
     };
     

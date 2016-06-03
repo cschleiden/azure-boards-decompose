@@ -1,4 +1,4 @@
-import { IWorkItem, IResultWorkItem } from "../interfaces";
+import { IWorkItem, IResultWorkItem, IBacklogLevel } from "../interfaces";
 
 export class WorkItemNode {
     public parent: WorkItemNode;
@@ -28,11 +28,17 @@ export class WorkItemNode {
     }
 }
 
+export interface IWorkItemTypeAdapter {
+    getMaxLevel(): number;
+
+    getBacklogForLevel(level: number): IBacklogLevel;
+}
+
 export class WorkItemTree {
     protected root: WorkItemNode;
     private insertId = -1;
 
-    constructor(private parentWorkItem: IWorkItem, private minLevel = 1, private maxLevel = 4) {
+    constructor(private parentWorkItem: IWorkItem, private workItemTypeService: IWorkItemTypeAdapter) {
         this.root = new WorkItemNode(this.parentWorkItem);
     }
 
@@ -49,32 +55,52 @@ export class WorkItemTree {
             return false;
         }
 
+        let nodeLevel = this._getLevelForNode(node);
+
         let nodeParentIdx = node.parent.children.indexOf(node);
         if (nodeParentIdx === 0) {
-            // Cannot indent without sibling
+            // Cannot indent without sibling before us that would become new parent
             return false;
         }
 
-        let wouldReachMaxLevel = false;
+        let wouldReachMaxLevel: number = null;
         this._traverse(node, n => {
             let level = this._getLevelForNode(n);
-            if (level + 1 > this.maxLevel) {
-                wouldReachMaxLevel = true;
+            if (level + 1 > this.workItemTypeService.getMaxLevel()) {
+                wouldReachMaxLevel = level;
                 return false;
             }
         });
-        if (wouldReachMaxLevel) {
-            // Cannot indent after max level
-            return false;
-        }
 
         let previousSibling = node.parent.children[nodeParentIdx - 1];
+        let newParent = previousSibling;
+
+        let moveChildrenToNewParent = false;
+
+        if (wouldReachMaxLevel !== null) {
+            if (wouldReachMaxLevel === nodeLevel) {
+                // Current node would reach max level, indent not possible
+                return false;
+            }
+
+            moveChildrenToNewParent = true;
+        }
 
         // Detach from current parent
         node.parent.remove(node);
 
         // Add to new parent
-        previousSibling.add(node);
+        newParent.add(node);
+
+        if (moveChildrenToNewParent) {
+            // Move children
+            for (let child of node.children) {
+                node.remove(child);
+                newParent.add(child);
+            }
+        }
+        
+        this._fixTypeIndex(node);
 
         return true;
     }
@@ -96,7 +122,7 @@ export class WorkItemTree {
 
         // Find position to insert in new parent
         let nodeParentIdx = newParent.children.indexOf(node.parent);
-        
+
         // Determine whether there are siblings after current item
         let nodeIdx = oldParent.children.indexOf(node);
         if (nodeIdx + 1 < oldParent.children.length) {
@@ -107,14 +133,24 @@ export class WorkItemTree {
                 node.add(itemToMove);
             }
         }
-        
+
         // Detach from current parent
         oldParent.remove(node);
 
         // Add to new parent
         newParent.insert(node, nodeParentIdx + 1);
-        
+
+        this._fixTypeIndex(node);
+
         return true;
+    }
+    
+    private _fixTypeIndex(node: WorkItemNode) {
+        let level = this._getLevelForNode(node);
+        let backlog = this.workItemTypeService.getBacklogForLevel(level);
+        if (node.workItem.typeIndex >= backlog.types.length) {
+            node.workItem.typeIndex = 0;
+        }
     }
 
     /** Insert sibling after the given work item */
@@ -123,36 +159,47 @@ export class WorkItemTree {
 
         let newNode = new WorkItemNode({
             id: this.insertId--,
-            title: ""
+            title: "",
+            typeIndex: 0
         });
-        
+
         if (node === this.root) {
             node.add(newNode);
         } else {
             node.parent.add(newNode);
         }
-        
+
         newNode.workItem.level = this._getLevelForNode(newNode);
 
         return newNode.workItem;
     }
-    
+
     /** Delete item with given id from tree */
     public deleteItem(id: number): boolean {
         let node = this._find(id);
-        
+
         if (node === this.root) {
             throw new Error("Cannot delete root");
         }
-        
+
         if (node.parent === this.root && this.root.children.length === 1) {
             // Cannot delete last item before root
             return false;
         }
-        
+
         node.parent.remove(node);
-        
+
         return true;
+    }
+
+    public changeType(id: number): void {
+        let node = this._find(id);
+        let level = this._getLevelForNode(node);
+        let typesForLevel = this.workItemTypeService.getBacklogForLevel(level).types;
+
+        if (++node.workItem.typeIndex >= typesForLevel.length) {
+            node.workItem.typeIndex = 0;
+        }
     }
 
     /** Flatten tree */
@@ -160,14 +207,15 @@ export class WorkItemTree {
         let result: IWorkItem[] = [];
 
         this._traverse(this.root, node => {
-            if (node !== this.root) {                
+            if (node !== this.root) {
                 let level = this._getLevelForNode(node);
-                
+
                 result.push({
                     id: node.workItem.id,
                     title: node.workItem.title,
                     level: level,
-                    relativeLevel: level - this.parentWorkItem.level
+                    relativeLevel: level - this.parentWorkItem.level,
+                    typeIndex: node.workItem.typeIndex
                 });
             }
         });
@@ -177,16 +225,18 @@ export class WorkItemTree {
 
     /** Flatten tree */
     public resultTree(): IResultWorkItem[] {
-        let result: IResultWorkItem[] = [];        
+        let result: IResultWorkItem[] = [];
 
         this._traverse(this.root, (node, parent) => {
             let level = this._getLevelForNode(node);
-            
+
             result.push({
                 id: node.workItem.id,
                 title: node.workItem.title,
                 level: level,
-                parentId: parent ? parent.workItem && parent.workItem.id : null
+                parentId: parent ? parent.workItem && parent.workItem.id : null,
+                typeIndex: node.workItem.typeIndex,
+                typeName: this.workItemTypeService.getBacklogForLevel(level).types[node.workItem.typeIndex].name
             });
         });
 
@@ -197,9 +247,9 @@ export class WorkItemTree {
         let level = 0;
 
         let parent = node.parent;
-        while(!!parent) {
+        while (!!parent) {
             ++level;
-            
+
             parent = parent.parent;
         }
 

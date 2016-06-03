@@ -30,19 +30,17 @@ export class Store extends BaseStore {
         super();
 
         this._parentWorkItem = parentWorkItem;
-
-        let minLevel = WorkItemTypeService.getInstance().getMinLevel();
-        let maxLevel = WorkItemTypeService.getInstance().getMaxLevel();
-        this._tree = new WorkItemTree(this._parentWorkItem, minLevel, maxLevel);
+        this._tree = new WorkItemTree(this._parentWorkItem, WorkItemTypeService.getInstance());
 
         Actions.changeWorkItemLevel.addListener(this._changeIndentLevel.bind(this));
         Actions.insertItem.addListener(this._insertItem.bind(this));
         Actions.changeTitle.addListener(this._changeTitle.bind(this));
         Actions.deleteItem.addListener(this._deleteItem.bind(this));
+        Actions.changeType.addListener(this._changeType.bind(this));
 
         // Add initial new item
         this._insertItem({ 
-            afterId: this._parentWorkItem.id 
+            afterId: this._parentWorkItem.id
         });
     }
 
@@ -54,7 +52,7 @@ export class Store extends BaseStore {
         let displayTree = this._tree.displayTree();
         
         for (let entry of displayTree) {
-            entry.relativeLevel =  entry.level - this._parentWorkItem.level;
+            entry.relativeLevel = entry.level - this._parentWorkItem.level;
         }
         
         return displayTree;
@@ -94,6 +92,11 @@ export class Store extends BaseStore {
 
         workItem.title = payload.title;
 
+        this._emitChanged();
+    }
+    
+    private _changeType(payload: Actions.IChangeTypePayload) {
+        this._tree.changeType(payload.id);
         this._emitChanged();
     }
 

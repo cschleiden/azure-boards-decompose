@@ -10,6 +10,11 @@ $lineHeight: 25px;
     
     span {
         display: block;
+        
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
     }
     
     .type {
@@ -17,7 +22,15 @@ $lineHeight: 25px;
         border-left: 6px solid;
         
         float: left;
-    }
+        
+        &.editable {
+            cursor: pointer;
+        
+            &:hover {
+                background: aliceblue;            
+            }
+        }
+    }       
     
     .title {
         padding-left: 10px;

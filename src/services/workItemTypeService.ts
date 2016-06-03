@@ -1,112 +1,146 @@
-import WIT_Client = require("TFS/WorkItemTracking/RestClient");
-import WIT_Contracts = require("TFS/WorkItemTracking/Contracts");
+import Work_Client = require("TFS/Work/RestClient");
+import Work_Contracts = require("TFS/Work/Contracts");
+
+import WorkItemTracking_Contracts = require("TFS/WorkItemTracking/Contracts");
 
 import Q = require("q");
 
-interface IWorkItemType {
-    typeNames: string[];
-    level: number;
-    color: string;
-}
+import { IBacklogLevel, IWorkItemType } from "../interfaces";
+import { IWorkItemTypeAdapter } from "../model/workItemTree";
 
-export class WorkItemTypeService {
+export class WorkItemTypeService implements IWorkItemTypeAdapter {
     private static _instance: WorkItemTypeService;
     public static getInstance(): WorkItemTypeService {
         if (!WorkItemTypeService._instance) {
             WorkItemTypeService._instance = new WorkItemTypeService();
         }
-        
+
         return WorkItemTypeService._instance;
     }
+
+    private _backlogs: IBacklogLevel[] = [];
+    private _level = 0;
     
-    private _workItemTypes: IWorkItemType[] = [];
+    private _getWorkItemTypeColor(name: string) {
+        name = name.toLowerCase().trim();
+
+        // There is no API to get work item colors yet, these are some OOB defaults
+        const lookup = {
+            "rgb(255, 123, 0)": ["scenario", "epic"],
+            "rgb(119, 59, 147)": ["feature"],
+            "rgb(0, 156, 204)": ["product backlog item", "requirement", "user story"],
+            "rgb(242, 203, 29)": ["task"],
+            "rgb(255, 0, 0)": ["bug"]
+        };
+
+        for (let l in lookup) {
+            if (lookup.hasOwnProperty(l)) {
+                for (let typeName of lookup[l]) {
+                    if (name === typeName) {
+                        return l;
+                    }
+                }
+            }
+        }
+
+        // Default
+        return "rgb(0, 156, 204)";
+    }
+
+    private _mapBacklog(backlog: Work_Contracts.CategoryConfiguration): IBacklogLevel {
+        return {
+            types: backlog.workItemTypes.map(wit => this._mapWorkItemType(wit)),
+            level: ++this._level
+        };
+    }
     
-    public init(): IPromise<void> {        
+    private _mapWorkItemType(type: WorkItemTracking_Contracts.WorkItemTypeReference) {
+        return {
+            name: type.name,
+            color: this._getWorkItemTypeColor(type.name)
+        };
+    }
+
+    public init(): IPromise<void> {
         let webContext = VSS.getWebContext();
-        
-        // Retrieve categories that make up the backlog levels on a hosted VSTS instance 
-        return WIT_Client.getClient().getWorkItemTypeCategories(webContext.project.id).then<void>(categories => {
-            let epicCategory = categories.filter(c => c.referenceName === "Microsoft.EpicCategory")[0];
-            let featureCategory = categories.filter(c => c.referenceName === "Microsoft.FeatureCategory")[0];
-            let requirementCategory = categories.filter(c => c.referenceName === "Microsoft.RequirementCategory")[0];
-            let taskCategory = categories.filter(c => c.referenceName === "Microsoft.TaskCategory")[0];
-                        
-            this._workItemTypes.push({
-                typeNames: epicCategory && epicCategory.workItemTypes.map(wit => wit.name) || ["Scenario"], // Workaround until process api is available 
-                level: 1,
-                color: "rgb(255, 123, 0)"
-            });
-            
-            this._workItemTypes.push({
-                typeNames: featureCategory.workItemTypes.map(wit => wit.name),
-                level: 2,
-                color: "rgb(119, 59, 147)"
-            });
-            
-            this._workItemTypes.push({
-                typeNames: requirementCategory.workItemTypes.map(wit => wit.name),
-                level: 3,
-                color: "rgb(0, 156, 204)"
-            });
-            
-            this._workItemTypes.push({
-                typeNames: taskCategory.workItemTypes.map(wit => wit.name),
-                level: 4,
-                color: "rgb(242, 203, 29)"
-            });
+
+        let client = Work_Client.getClient()
+        let teamSettingsPromise = client.getTeamSettings({
+            project: webContext.project.name,
+            projectId: webContext.project.id,
+            team: webContext.team.name,
+            teamId: webContext.team.id            
         });
-    }    
+        
+        let processConfigurationPromise = client.getProcessConfiguration(webContext.project.id);
+        
+        return Q.spread<any, void>([teamSettingsPromise, processConfigurationPromise], (teamSettings: Work_Contracts.TeamSetting, processConfiguration: Work_Contracts.ProcessConfiguration) => {
+            for (let portfolioBacklog of processConfiguration.portfolioBacklogs) {
+                this._backlogs.push(this._mapBacklog(portfolioBacklog));
+            }
+
+            let requirementBacklog = this._mapBacklog(processConfiguration.requirementBacklog);
+            if (teamSettings.bugsBehavior === Work_Contracts.BugsBehavior.AsRequirements) {
+                requirementBacklog.types.push(...processConfiguration.bugWorkItems.workItemTypes.map(wit => this._mapWorkItemType(wit)));
+            }
+            this._backlogs.push(requirementBacklog);
+            
+            let taskBacklog = this._mapBacklog(processConfiguration.taskBacklog);
+            if (teamSettings.bugsBehavior === Work_Contracts.BugsBehavior.AsTasks) {
+                requirementBacklog.types.push(...processConfiguration.bugWorkItems.workItemTypes.map(wit => this._mapWorkItemType(wit)));
+            }
+            this._backlogs.push(taskBacklog);
+        });
+    }
 
     public getMinLevel(): number {
-        return this._workItemTypes.reduce((maxLevel, wit) => Math.min(wit.level, maxLevel), Number.MAX_VALUE); 
+        return this._backlogs.reduce((maxLevel, wit) => Math.min(wit.level, maxLevel), Number.MAX_VALUE);
     }
 
     public getMaxLevel(): number {
-        return this._workItemTypes.reduce((maxLevel, wit) => Math.max(wit.level, maxLevel), 0); 
+        return this._backlogs.reduce((maxLevel, wit) => Math.max(wit.level, maxLevel), 0);
     }
 
-    public getColorForType(typeName: string) {
-        for (let workItemType of this._workItemTypes) {
-            for (let projectType of Object.keys(workItemType.typeNames)) {
-                if (workItemType.typeNames[projectType] === typeName) {
-                    return workItemType.color;
+    public getType(typeName: string): IWorkItemType {
+        for(let backlog of this._backlogs) {
+            for (let type of backlog.types) {
+                if (type.name.toLocaleLowerCase() === typeName.toLocaleLowerCase()) {
+                    return type;
                 }
             }
         }
-
-        return null;
+        
+        throw new Error("Unknown type");
     }
 
-    public getTypeForLevel(level: number): IWorkItemType {
-        let matchingType = this._workItemTypes.filter(wit => wit.level === level);
+    public getBacklogForLevel(level: number): IBacklogLevel {
+        let matchingType = this._backlogs.filter(wit => wit.level === level);
         if (matchingType && matchingType.length > 0) {
             return matchingType[0];
         }
-        
+
         return null;
     }
 
-    public getLevelForType(typeName: string): number {
-        for (let workItemType of this._workItemTypes) {
-            for (let projectType of Object.keys(workItemType.typeNames)) {
-                if (workItemType.typeNames[projectType] === typeName) {
-                    return workItemType.level;
+    public getLevelForTypeName(typeName: string): number {
+        for (let backlog of this._backlogs) {
+            for (let type of backlog.types) {
+                if (type.name.toLocaleLowerCase() === typeName.toLocaleLowerCase()) {
+                    return backlog.level;
                 }
             }
         }
-    
-        // Treat unknown types as types of the highest level for now. This has to change
-        // once a process config REST API becomes available     
-        return 1;
+     
+        return null;
     }
-    
+
     /** Returns first type name for given level */
     public getTypeNameForLevel(level: number): string {
-        let matchingType = this._workItemTypes.filter(wit => wit.level === level);
-        if (matchingType && matchingType.length > 0) {
-            return matchingType[0].typeNames[0];
+        let matchingBacklog = this._backlogs.filter(wit => wit.level === level);
+        if (matchingBacklog && matchingBacklog.length > 0) {
+            return matchingBacklog[0].types[0].name;
         }
-        
+
         return null;
-    }   
+    }
 }

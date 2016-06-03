@@ -41,8 +41,6 @@ export class MainComponent extends React.Component<IMainProps, IMainState> {
                     ref={ idx.toString() }
                     />) }
         </div>);
-
-        // isFocused={ idx === this.state.focusedItemIdx }
     }
 
     public componentDidUpdate() {
@@ -73,7 +71,7 @@ export class MainComponent extends React.Component<IMainProps, IMainState> {
     }
 
     private _onDataChange() {
-        this.setState(() => this._getStateFromStore(), () => { console.log("updated " + this.state.items.length); });
+        this.setState(() => this._getStateFromStore());
     }
 
     private _onKeyUp(evt: KeyboardEvent) {
@@ -97,8 +95,12 @@ export class MainComponent extends React.Component<IMainProps, IMainState> {
                 break;
 
             case "Enter": {
-                this.props.actionsCreator.insertItem(focusedItem.id);
-                this._forceUpdateFocusedItem(this.state.focusedItemIdx + 1);
+                if (evt.altKey) {
+                    this.props.actionsCreator.changeType(focusedItem.id);
+                } else {
+                    this.props.actionsCreator.insertItem(focusedItem.id);
+                    this._forceUpdateFocusedItem(this.state.focusedItemIdx + 1);
+                }
                 break;
             }
 

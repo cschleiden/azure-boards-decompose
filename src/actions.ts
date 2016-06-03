@@ -57,3 +57,11 @@ export interface IDeleteItemPayload {
 
 /** Action to be called when work item should be deleted */
 export var deleteItem = new Action<IDeleteItemPayload>();
+
+
+export interface IChangeTypePayload {
+    id: number;
+}
+
+/** Action to be called when the work item type should be changed */
+export var changeType = new Action<IChangeTypePayload>();

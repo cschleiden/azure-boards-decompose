@@ -12,9 +12,15 @@ export class WorkItemNode {
         this.children.push(node);
     }
 
+    /** Insert node before the given index */
     public insert(node: WorkItemNode, idx: number) {
         node.parent = this;
         this.children.splice(idx, 0, node);
+    }
+
+    /** Insert node after given index */
+    public insertAfter(node: WorkItemNode, idx: number) {
+        this.insert(node, idx + 1);
     }
 
     public remove(node: WorkItemNode) {
@@ -166,7 +172,14 @@ export class WorkItemTree {
         if (node === this.root) {
             node.add(newNode);
         } else {
-            node.parent.add(newNode);
+            if (node.children.length > 0) {
+                // Node has children, add one in first place
+                node.insert(newNode, 0);
+            } else {
+                // Add sibling item after current node
+                let idx = node.parent.children.indexOf(node);
+                node.parent.insertAfter(newNode, idx);
+            }
         }
 
         newNode.workItem.level = this._getLevelForNode(newNode);

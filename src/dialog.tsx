@@ -82,7 +82,7 @@ Q.all<any>([typeServiceInitPromise, parentWorkItemPromise]).then<void>(values =>
                     result={ failedWorkItems } 
                     workItems={ resultTree } />, document.getElementById("content"));
 
-                throw "Decompose - Error while saving";
+                throw "Decompose - Error";
             } else {
                 // Saved successfully, close dialog
                 return;

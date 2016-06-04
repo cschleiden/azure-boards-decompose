@@ -109,6 +109,22 @@ describe("WorkItemTree", () => {
             });
         });
 
+        it("should allow to insert item after reference element with children", () => {
+            tree = new TestableWorkItemTree(parentWorkItem);
+            let newId = tree.insert(2).id;
+                        
+            expect(getTreeLevels()).to.be.deep.equal([2, 3, 3, 4, 4, 2, 3, 3]);
+            expect(getTreeIds()).to.be.deep.equal([0, 1, 2, newId, 3, 4, 5, 6]);
+        });
+
+        it("should allow to insert item after reference element on same level", () => {
+            tree = new TestableWorkItemTree(parentWorkItem);
+            let newId = tree.insert(5).id;
+                        
+            expect(getTreeLevels()).to.be.deep.equal([2, 3, 3, 4, 2, 3, 3, 3]);
+            expect(getTreeIds()).to.be.deep.equal([0, 1, 2, 3, 4, 5, newId, 6]);
+        });
+        
         it("should not allow to insert after invalid element", () => {
             expect(() => tree.insert(99)).to.throw(Error);
         });

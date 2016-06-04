@@ -16,16 +16,20 @@ interface ISaveResult {
 export class WorkItemCreator {
     private _tempToRealParentIdMap: IDictionaryNumberTo<number>;
     private _failedWorkItems: IDictionaryNumberTo<string>;
+    
+    // In order to preserve the order of child items we'll set a stack rank matching the order in which they 
+    // were created. Once a user reorders them, this will trigger resparsification. 
+    private _order = 0;
 
     constructor(private _parentId: number, private _iterationPath: string, private _areaPath: string) {
         this._tempToRealParentIdMap = {};
         this._failedWorkItems = {};
-        
+
         this._tempToRealParentIdMap[this._parentId] = this._parentId;
     }
 
     /** Create work items, return ids of failed operations */
-    public createWorkItems(result: IResultWorkItem[]): IPromise<IDictionaryNumberTo<string>> {       
+    public createWorkItems(result: IResultWorkItem[]): IPromise<IDictionaryNumberTo<string>> {
         return this._createWorkItemsWorker(result.slice(0)).then(() => {
             return this._failedWorkItems;
         });
@@ -44,7 +48,7 @@ export class WorkItemCreator {
                 if (workItem.parentId === this._parentId || this._tempToRealParentIdMap[workItem.parentId]) {
                     promises.push(this._getCreateWorkItemPromise(workItem));
                 } else {
-                    if (this._failedWorkItems[workItem.parentId]) {                        
+                    if (this._failedWorkItems[workItem.parentId]) {
                         // Parent has failed to save earlier, mark as failed and do not try again
                         this._failedWorkItems[workItem.id] = "Parent could not be saved";
                     } else if (!this._failedWorkItems[workItem.id]) {
@@ -83,6 +87,7 @@ export class WorkItemCreator {
         patchDocument.push(this._getAddFieldOp("System.History", "Created using QuickCreate"));
         patchDocument.push(this._getAddFieldOp("System.IterationPath", this._iterationPath));
         patchDocument.push(this._getAddFieldOp("System.AreaPath", this._areaPath));
+        patchDocument.push(this._getAddFieldOp(WorkItemTypeService.getInstance().getOrderFieldRefName(), (++this._order).toString(10)));
         patchDocument.push({
             "op": "add",
             "path": "/relations/-",
@@ -94,7 +99,7 @@ export class WorkItemCreator {
 
         return client.createWorkItem(patchDocument, context.project.id, workItemType).then<ISaveResult>((createdWorkItem: WIT_Contracts.WorkItem) => {
             this._tempToRealParentIdMap[workItem.id] = createdWorkItem.id;
-            
+
             return {
                 tempId: workItem.id,
                 id: createdWorkItem.id

@@ -20,6 +20,7 @@ export class WorkItemTypeService implements IWorkItemTypeAdapter {
 
     private _backlogs: IBacklogLevel[] = [];
     private _level = 0;
+    private _orderFieldRefName: string;
     
     private _getWorkItemTypeColor(name: string) {
         name = name.toLowerCase().trim();
@@ -90,7 +91,13 @@ export class WorkItemTypeService implements IWorkItemTypeAdapter {
                 requirementBacklog.types.push(...processConfiguration.bugWorkItems.workItemTypes.map(wit => this._mapWorkItemType(wit)));
             }
             this._backlogs.push(taskBacklog);
+            
+            this._orderFieldRefName = processConfiguration.typeFields["Order"].referenceName;
         });
+    }
+
+    public getOrderFieldRefName(): string {
+        return this._orderFieldRefName;
     }
 
     public getMinLevel(): number {

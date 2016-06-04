@@ -15,3 +15,6 @@ When you start to work on a feature and you want to quickly break it down into U
 With **Decompose** you can easily define hierarchies, change work items between levels, and finally create actual work items with a single click.   
 
 ![Breaking down of an Epic](marketplace/quick-decompose.gif)
+
+# Code #
+The code is available at https://github.com/cschleiden/vsts-quick-decompose.

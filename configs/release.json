@@ -1,5 +1,8 @@
 {
-    "public": false,
+    "galleryFlags": [
+        "Public",
+        "Preview"
+    ],
     "files": [
         {
             "path": "src",

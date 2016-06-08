@@ -16,5 +16,9 @@ With **Decompose** you can easily define hierarchies, change work items between 
 
 ![Breaking down of an Epic](marketplace/quick-decompose.gif)
 
+# Version History #
+
+* **0.0.5** - Fixes a bug that prevented Internet Explorer users from saving
+
 # Code #
 The code is available at https://github.com/cschleiden/vsts-quick-decompose.

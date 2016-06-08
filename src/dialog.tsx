@@ -27,6 +27,29 @@ let typeServiceInitPromise = WorkItemTypeService.getInstance().init();
 let parentWorkItemPromise = WIT_Client.getClient().getWorkItem(
     inputData.workItemId, ["System.Id", "System.WorkItemType", "System.Title", "System.IterationPath", "System.AreaPath"]);
 
+// Polyfill Object.Assign for Internet Explorer
+if (typeof Object["assign"] != 'function') {
+    Object["assign"] = function (target) {
+        'use strict';
+        if (target == null) {
+            throw new TypeError('Cannot convert undefined or null to object');
+        }
+
+        target = Object(target);
+        for (var index = 1; index < arguments.length; index++) {
+            var source = arguments[index];
+            if (source != null) {
+                for (var key in source) {
+                    if (Object.prototype.hasOwnProperty.call(source, key)) {
+                        target[key] = source[key];
+                    }
+                }
+            }
+        }
+        return target;
+    };
+}
+
 Q.all<any>([typeServiceInitPromise, parentWorkItemPromise]).then<void>(values => {
     let workItem: WIT_Contracts.WorkItem = values[1];
 

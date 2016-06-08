@@ -29,13 +29,17 @@ var actionProvider = {
 
                                             return onSaveHandler().then(() => {
                                                 dialog.close();
-                                                
+
                                                 return VSS.getService(VSS.ServiceIds.Navigation).then((navigationService: IHostNavigationService) => {
                                                     // Refresh backlog
                                                     navigationService.reload();
                                                 });
-                                            }, (error) => {
-                                                dialog.setTitle(error);
+                                            }, (error: Error | string) => {
+                                                if (typeof error === "string") {
+                                                    dialog.setTitle(error);
+                                                } else {
+                                                    dialog.setTitle(error.message);
+                                                }
                                             });
                                         }
                                     },

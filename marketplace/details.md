@@ -1,3 +1,7 @@
+# Important notice - 6/15/2016 #
+
+This morning the extension **stopped** working due to a bug in the product. A fix is currently being worked on and will hopefully be deployed within the next day. 
+
 # Easy decomposition of work items #
 
 **Decompose** allows you to quickly break down work items into sub-hierarchies. 

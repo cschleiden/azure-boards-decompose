@@ -17,6 +17,7 @@ import { WorkItemCreator } from "services/workItemCreator";
 
 import { MainComponent } from "components/mainComponent";
 import { ErrorComponent } from "components/errorComponent";
+import { GenericErrorComponent } from "components/genericErrorComponent";
 
 import { Store } from "store";
 import { ActionsCreator } from "actionsCreator";
@@ -112,4 +113,8 @@ Q.all<any>([typeServiceInitPromise, parentWorkItemPromise]).then<void>(values =>
             }
         });
     });
+}, (reason: Error) => {
+    ReactDOM.render(<GenericErrorComponent 
+        message={ reason && reason.message || "Something went wrong, please try again later." }
+        />, document.getElementById("content"));
 });

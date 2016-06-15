@@ -13,7 +13,7 @@ module.exports = {
         libraryTarget: "amd"
     },
     externals: [
-        /^VSS\/.*/, /^TFS\/.*/
+        /^VSS\/.*/, /^TFS\/.*/, /^q$/
     ],
     resolve: {
         extensions: [
@@ -42,7 +42,7 @@ module.exports = {
     plugins: [
         new CopyWebpackPlugin([
             { from: "./node_modules/vss-web-extension-sdk/lib/VSS.SDK.min.js", to: "libs/VSS.SDK.min.js" },
-            { from: "./src/*.html", to: "/" },
+            { from: "./src/*.html", to: "./" },
             { from: "./marketplace", to: "marketplace" },
             { from: "./vss-extension.json", to: "vss-extension-release.json" }
         ])

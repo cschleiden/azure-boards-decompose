@@ -1,6 +1,6 @@
-# Important notice - 6/15/2016 #
+# Update - 6/21/2016 #
 
-This morning the extension **stopped** working due to a bug in the product. A fix is currently being worked on and will hopefully be deployed within the next day. 
+After the latest VSTS updates the extension should work for everyone. If not, please drop me an email, or create an issue on github.
 
 # Easy decomposition of work items #
 
@@ -23,6 +23,10 @@ With **Decompose** you can easily define hierarchies, change work items between 
 # Version History #
 
 * **0.0.5** - Fixes a bug that prevented Internet Explorer users from saving
+
+# On Premise/Team Foundation Server #
+
+Many people have asked why this extension is only available for Team Services: it relies on APIs that will only be available in the next **major** version of Team Foundation Server. After release, I will provide a package of this extension that can be installed on an on premise Team Foundation Server, until then I can only support Team Services.
 
 # Code #
 The code is available at https://github.com/cschleiden/vsts-quick-decompose.

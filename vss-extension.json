@@ -1,8 +1,11 @@
 {
     "manifestVersion": 1,
-    "version": "0.0.6",
+    "version": "1.0.0",
     "name": "Decompose",
-    "scopes": [ "vso.work", "vso.work_write" ],
+    "scopes": [
+        "vso.work",
+        "vso.work_write"
+    ],
     "description": "Quickly decompose work item into sub-hierarchies",
     "publisher": "cschleiden",
     "id": "decompose",
@@ -11,11 +14,15 @@
     },
     "targets": [
         {
-            "id": "Microsoft.VisualStudio.Services.Cloud"
+            "id": "Microsoft.VisualStudio.Services"
         }
     ],
+    "demands": [
+        "api-version/3.0"
+    ],
     "tags": [
-        "Work Items", "Decompose"
+        "Work Items",
+        "Decompose"
     ],
     "content": {
         "details": {

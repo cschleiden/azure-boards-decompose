@@ -1,7 +1,3 @@
-# Update - 6/21/2016 #
-
-After the latest VSTS updates the extension should work for everyone. If not, please drop me an email, or create an issue on github.
-
 # Easy decomposition of work items #
 
 **Decompose** allows you to quickly break down work items into sub-hierarchies. 
@@ -22,6 +18,7 @@ With **Decompose** you can easily define hierarchies, change work items between 
 
 # Version History #
 
+* **1.0.1** - Added support for TFS "15" RC2 and higher (note, it will **not** work on any version prior to that, even if it might let you install)
 * **0.0.5** - Fixes a bug that prevented Internet Explorer users from saving
 
 # On Premise/Team Foundation Server #

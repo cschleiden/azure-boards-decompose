@@ -5,15 +5,15 @@
     ],
     "files": [
         {
-            "path": "src",
+            "path": "../dist/src",
             "addressable": true
         },
         {
-            "path": "libs",
+            "path": "../dist/libs",
             "addressable": true
         },
         {
-            "path": "marketplace",
+            "path": "../dist/marketplace",
             "addressable": true
         }
     ]

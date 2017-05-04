@@ -59,6 +59,9 @@ export class WorkItemTypeService implements IWorkItemTypeAdapter {
         ])
             .spread((
                 backlogConfiguration: Work_Contracts.BacklogConfiguration, processConfiguration: Work_Contracts.ProcessConfiguration, workItemTypes: WorkItemTracking_Contracts.WorkItemType[]) => {
+                // Sort by rank desc
+                backlogConfiguration.portfolioBacklogs.sort((a, b) => b.rank - a.rank);
+
                 for (let portfolioBacklog of backlogConfiguration.portfolioBacklogs) {
                     this._backlogs.push(this._mapBacklog(portfolioBacklog));
                 }
@@ -77,17 +80,19 @@ export class WorkItemTypeService implements IWorkItemTypeAdapter {
                 for (let backlog of this._backlogs) {
                     if (backlog.types.length > 1) {
                         for (let workItemType of backlog.types) {
-                            if (workItemType.name !== backlog.defaultType.name) {
-                                // Some type might be disabled, check every type that's not default
-                                workItemTypeProbePromises.push(witClient.createWorkItem([{
-                                    op: "add",
-                                    path: "/fields/System.Title",
-                                    value: ""
-                                }], webContext.project.id, workItemType.name, true).then<void>(null, () => {
+                            // Some type might be disabled, check every type that's not default
+                            workItemTypeProbePromises.push(witClient.createWorkItem([{
+                                op: "add",
+                                path: "/fields/System.Title",
+                                value: ""
+                            }], webContext.project.id, workItemType.name, true).then<void>(null, (error) => {
+                                const { serverError } = error;
+
+                                if (serverError && serverError.typeKey !== "RuleValidationException") {
                                     // Creation disabled, remove from backlog
                                     backlog.types.splice(backlog.types.indexOf(workItemType), 1);
-                                }));
-                            }
+                                }
+                            }));
                         }
                     }
                 }

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
 import { WorkItemTree, WorkItemNode, IWorkItemTypeAdapter } from "./workItemTree";
-import { IWorkItem, IBacklogLevel, IWorkItemType } from "../interfaces";
+import { IWorkItem, IBacklogLevel } from "../interfaces";
 
 
 class TestableWorkItemTypeService implements IWorkItemTypeAdapter {

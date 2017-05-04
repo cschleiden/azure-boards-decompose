@@ -1,3 +1,5 @@
+///<reference types="vss-web-extension-sdk" />
+
 import Work_Client = require("TFS/Work/RestClient");
 import Work_Contracts = require("TFS/Work/Contracts");
 

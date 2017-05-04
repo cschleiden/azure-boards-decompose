@@ -3,18 +3,27 @@
   "main": "webpack.config.js",
   "scripts": {
     "clean": "rimraf dist *.vsix",
-    "dev": "webpack-dev-server --hot --progress --colors --content-base ./src --https",
+    "dev": "webpack-dev-server --hot --progress --colors --content-base ./src --https --port 9085",
     "package:dev": "node ./scripts/packageDev",
     "publish:dev": "npm run package:dev && node ./scripts/publishDev",
     "build:release": "npm run clean && mkdir dist && webpack --progress --colors --output-path ./dist -p",
     "publish:release": "npm run build:release && node ./scripts/publishRelease",
     "dev:test": "karma start",
     "test": "karma start --single-run",
-    "postinstall": "typings install && npm run test"
+    "postinstall": "npm run test"
   },
   "author": "Christopher Schleiden",
   "license": "MIT",
   "devDependencies": {
+    "@types/chai": "^3.4.35",
+    "@types/jquery": "^2.0.40",
+    "@types/knockout": "^3.4.39",
+    "@types/mocha": "^2.2.39",
+    "@types/q": "0.0.32",
+    "@types/react": "0.14.57",
+    "@types/react-dom": "^0.14.23",
+    "@types/react-spinkit": "^1.1.30",
+    "@types/requirejs": "^2.1.28",
     "chai": "^3.5.0",
     "copy-webpack-plugin": "^3.0.0",
     "css-loader": "^0.23.1",
@@ -35,14 +44,12 @@
     "sass-loader": "^3.2.0",
     "sinon": "^1.17.4",
     "style-loader": "^0.13.1",
-    "tfx-cli": "^0.3.20",
-    "ts-loader": "^0.8.2",
-    "typescript": "^1.8.10",
-    "typings": "^1.0.4",
+    "ts-loader": "2.0.3",
+    "typescript": "2.2.2",
     "webpack": "^1.13.1",
     "webpack-dev-server": "^1.14.1"
   },
   "dependencies": {
-    "vss-web-extension-sdk": "^1.100.0"
+    "vss-web-extension-sdk": "2.115.0"
   }
 }

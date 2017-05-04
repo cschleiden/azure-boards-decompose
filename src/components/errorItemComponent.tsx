@@ -1,10 +1,9 @@
 import "./items.scss";
 
 import * as React from "react";
-import * as ReactDOM from "react-dom";
 
 import { IResultWorkItem } from "../interfaces";
-import { WorkItemTypeService } from "services/workItemTypeService";
+import { WorkItemTypeService } from "../services/workItemTypeService";
 
 export interface IErrorItemProps extends React.Props<void> {
     item: IResultWorkItem;

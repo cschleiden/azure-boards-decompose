@@ -1,11 +1,11 @@
-import { Store } from "store";
+import { Store } from "./store";
 
-import * as Actions from "actions";
+import * as Actions from "./actions";
 
-export class ActionsCreator {        
-    constructor(private store: Store) {        
+export class ActionsCreator {
+    constructor(private store: Store) {
     }
-    
+
     /**
      * Change the title of the given item
      * @param id Id of work item to change title for

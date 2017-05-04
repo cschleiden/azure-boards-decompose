@@ -1,8 +1,8 @@
-import { IWorkItem, IResultWorkItem } from "interfaces";
-import { WorkItemTypeService } from "services/workItemTypeService";
-import { WorkItemTree } from "model/workItemTree";
+import { IWorkItem, IResultWorkItem } from "./interfaces";
+import { WorkItemTypeService } from "./services/workItemTypeService";
+import { WorkItemTree } from "./model/workItemTree";
 
-import * as Actions from "actions";
+import * as Actions from "./actions";
 
 export interface StoreListener {
     (): void;

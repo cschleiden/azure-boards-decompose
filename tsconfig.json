@@ -3,11 +3,11 @@
         "module": "amd",
         "sourceMap": false,
         "target": "es5",
-        "jsx": "react"
+        "jsx": "react",
+        "moduleResolution": "node"
     },   
     "filesGlob": [
         "src/**/*.ts",
-        "src/**/*.tsx",
-        "typings/index.d.ts"
+        "src/**/*.tsx"
     ]    
 }

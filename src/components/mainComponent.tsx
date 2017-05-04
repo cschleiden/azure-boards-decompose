@@ -1,8 +1,7 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
 
-import { AddItemsComponent } from "components/addItemsComponent";
-import { ParentWorkItemComponent } from "components/parentWorkItemComponent";
+import { AddItemsComponent } from "../components/addItemsComponent";
+import { ParentWorkItemComponent } from "../components/parentWorkItemComponent";
 
 import { IWorkItem } from "../interfaces";
 import { Store } from "../store";

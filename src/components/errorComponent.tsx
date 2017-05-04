@@ -1,12 +1,8 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
 
-import { AddItemsComponent } from "components/addItemsComponent";
-import { ErrorItemComponent } from "components/errorItemComponent";
+import { ErrorItemComponent } from "../components/errorItemComponent";
 
 import { IResultWorkItem } from "../interfaces";
-import { Store } from "../store";
-import { ActionsCreator } from "../actionsCreator";
 
 export interface IErrorProps extends React.Props<void> {
     workItems: IResultWorkItem[];
@@ -24,13 +20,13 @@ export class ErrorComponent extends React.Component<IErrorProps, void> {
                 // no error
                 return null;
             }
-            
-            return <ErrorItemComponent key={ wi.id } item={ wi } error={ this.props.result[wi.id] } />
-        }).filter(e => !!e)
-        
+
+            return <ErrorItemComponent key={wi.id} item={wi} error={this.props.result[wi.id]} />
+        }).filter(e => !!e);
+
         return (<div>
             <h3>Unfortunately these work items could not be saved:</h3>
-            { errorItems } 
+            {errorItems}
         </div>);
     }
 }

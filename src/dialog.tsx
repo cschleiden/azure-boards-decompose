@@ -10,17 +10,17 @@ import WIT_Contracts = require("TFS/WorkItemTracking/Contracts");
 
 import Q = require("q");
 
-import { IWorkItem, IDialogInputData, IResultWorkItem } from "interfaces";
+import { IWorkItem, IDialogInputData, IResultWorkItem } from "./interfaces";
 
-import { WorkItemTypeService } from "services/workItemTypeService";
-import { WorkItemCreator } from "services/workItemCreator";
+import { WorkItemTypeService } from "./services/workItemTypeService";
+import { WorkItemCreator } from "./services/workItemCreator";
 
-import { MainComponent } from "components/mainComponent";
-import { ErrorComponent } from "components/errorComponent";
-import { GenericErrorComponent } from "components/genericErrorComponent";
+import { MainComponent } from "./components/mainComponent";
+import { ErrorComponent } from "./components/errorComponent";
+import { GenericErrorComponent } from "./components/genericErrorComponent";
 
-import { Store } from "store";
-import { ActionsCreator } from "actionsCreator";
+import { Store } from "./store";
+import { ActionsCreator } from "./actionsCreator";
 
 let inputData: IDialogInputData = VSS.getConfiguration();
 

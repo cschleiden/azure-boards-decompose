@@ -1,6 +1,6 @@
 {
     "manifestVersion": 1,
-    "version": "1.0.3",
+    "version": "1.0.4",
     "name": "Decompose",
     "scopes": [
         "vso.work",
@@ -44,14 +44,14 @@
     "contributions": [
         {
             "id": "contextMenu",
-            "type": "ms.vss-web.action-provider",
-            "description": "",
+            "type": "ms.vss-web.action",
             "targets": [
                 "ms.vss-work-web.work-item-context-menu"
             ],
             "properties": {
                 "group": "contributed",
-                "uri": "src/index.html"
+                "uri": "src/index.html",
+                "text": "Decompose work item"
             }
         },
         {

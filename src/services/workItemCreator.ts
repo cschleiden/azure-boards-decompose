@@ -1,11 +1,13 @@
+///<reference types="vss-web-extension-sdk" />
+
 import WIT_Client = require("TFS/WorkItemTracking/RestClient");
 import WIT_Contracts = require("TFS/WorkItemTracking/Contracts");
 
 import Q = require("q");
 
-import { IWorkItem, IDialogInputData, IResultWorkItem } from "interfaces";
+import { IResultWorkItem } from "../interfaces";
 
-import { WorkItemTypeService } from "services/workItemTypeService";
+import { WorkItemTypeService } from "./workItemTypeService";
 
 interface ISaveResult {
     tempId: number;

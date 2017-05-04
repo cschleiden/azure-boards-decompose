@@ -1,6 +1,6 @@
 {
     "manifestVersion": 1,
-    "version": "1.0.4",
+    "version": "1.1.0",
     "name": "Decompose",
     "scopes": [
         "vso.work",
@@ -28,6 +28,10 @@
         "details": {
             "path": "marketplace/details.md"
         }
+    },
+    "repository": {
+        "type": "git",
+        "uri": "https://github.com/cschleiden/vsts-quick-decompose"
     },
     "links": {
         "support": {

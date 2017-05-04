@@ -18,6 +18,7 @@ With **Decompose** you can easily define hierarchies, change work items between 
 
 # Version History #
 
+* **1.1.0** - Decompose now correctly works with customized backlogs and work item types
 * **1.0.1** - Added support for TFS "15" RC2 and higher (note, it will **not** work on any version prior to that, even if it might let you install)
 * **0.0.5** - Fixes a bug that prevented Internet Explorer users from saving
 

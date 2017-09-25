@@ -88,7 +88,9 @@ export class WorkItemTypeService implements IWorkItemTypeAdapter {
                             }], webContext.project.id, workItemType.name, true).then<void>(null, (error) => {
                                 const { serverError } = error;
 
-                                if (serverError && serverError.typeKey !== "RuleValidationException") {
+                                if (serverError
+                                    && serverError.typeKey !== "RuleValidationException"
+                                    && serverError.typeKey !== "WorkItemTrackingRuleValidationAggregateException") {
                                     // Creation disabled, remove from backlog
                                     backlog.types.splice(backlog.types.indexOf(workItemType), 1);
                                 }

@@ -78,8 +78,8 @@ Q.all<any>([typeServiceInitPromise, parentWorkItemPromise]).then<void>(values =>
     let actionsCreator = new ActionsCreator(store);
 
     ReactDOM.render(<MainComponent
-        store={ store }
-        actionsCreator={ actionsCreator } />, document.getElementById("content"));
+        store={store}
+        actionsCreator={actionsCreator} />, document.getElementById("content"));
 
     store.addListener(() => {
         let isValid = store.getIsValid();
@@ -91,7 +91,7 @@ Q.all<any>([typeServiceInitPromise, parentWorkItemPromise]).then<void>(values =>
         let spinner = React.createElement(Spinner as any, { spinnerName: "rotating-plane", noFadeIn: true });
 
         ReactDOM.render(<div className="saving-indicator">
-            { spinner }
+            {spinner}
             <div>Saving</div>
         </div>, document.getElementById("content"));
 
@@ -100,11 +100,9 @@ Q.all<any>([typeServiceInitPromise, parentWorkItemPromise]).then<void>(values =>
         return creator.createWorkItems(resultTree).then<void>(failedWorkItems => {
             if (Object.keys(failedWorkItems).length > 0) {
                 // Some work items have failed to save, show error result
-                //let defer = Q.defer<void>();
-
                 ReactDOM.render(<ErrorComponent
-                    result={ failedWorkItems } 
-                    workItems={ resultTree } />, document.getElementById("content"));
+                    result={failedWorkItems}
+                    workItems={resultTree} />, document.getElementById("content"));
 
                 throw "Decompose - Error";
             } else {
@@ -114,7 +112,7 @@ Q.all<any>([typeServiceInitPromise, parentWorkItemPromise]).then<void>(values =>
         });
     });
 }, (reason: Error) => {
-    ReactDOM.render(<GenericErrorComponent 
-        message={ reason && reason.message || "Something went wrong, please try again later." }
-        />, document.getElementById("content"));
+    ReactDOM.render(<GenericErrorComponent
+        message={reason && reason.message || "Something went wrong, please try again later."}
+    />, document.getElementById("content"));
 });

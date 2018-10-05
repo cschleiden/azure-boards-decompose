@@ -18,7 +18,7 @@ interface ISaveResult {
 export class WorkItemCreator {
     private _tempToRealParentIdMap: IDictionaryNumberTo<number>;
     private _failedWorkItems: IDictionaryNumberTo<string>;
-    
+
     // In order to preserve the order of child items we'll set a stack rank matching the order in which they 
     // were created. Once a user reorders them, this will trigger resparsification. 
     private _order = 0;
@@ -86,7 +86,6 @@ export class WorkItemCreator {
         let patchDocument: any[] = [];
 
         patchDocument.push(this._getAddFieldOp("System.Title", workItem.title));
-        patchDocument.push(this._getAddFieldOp("System.History", "Created using QuickCreate"));
         patchDocument.push(this._getAddFieldOp("System.IterationPath", this._iterationPath));
         patchDocument.push(this._getAddFieldOp("System.AreaPath", this._areaPath));
         patchDocument.push(this._getAddFieldOp(WorkItemTypeService.getInstance().getOrderFieldRefName(), (++this._order).toString(10)));

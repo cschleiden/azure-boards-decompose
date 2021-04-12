@@ -1,3 +1,5 @@
+**2021/4/1 - I have stopped support for all my Azure DevOps extensions and unpublished them from the marketplace**
+
 # VSTS Quick Decompose #
 
 This extension allows you to quickly decompose a work item into a valid hierarchy. Example:
